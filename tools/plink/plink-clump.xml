@@ -1,0 +1,117 @@
+<tool id="plink:clump1" name="LD clumping and annotation" version="1.9">
+	<description> </description>
+	<requirements>
+		<requirement type="package" version="1.09"> plink </requirement>
+	</requirements>
+	 <stdio>
+                 <exit_code range="2"   level="fatal"   description="Out of Memory" />
+                <exit_code range="3:5" level="warning" description="Low disk space" />
+                <exit_code range="6:"  level="fatal"   description="Bad input dataset" />
+        </stdio>
+	<command>
+	<![CDATA[
+		#set id = $bedFile.dataset_id
+		ln -s $bedFile input.bed ;
+		ln -s $bimFile input.bim ;
+		ln -s $famFile input.fam ;
+		plink --bfile input 
+		--clump $assocFile
+		--clump-field $pcol
+		--clump-snp-field $snpcol
+		--clump-p1 $p1
+		#if str($advance_options.show)=='yes':
+			--clump-p2 $advance_options.p2
+			--clump-kb $advance_options.kb
+			--clump-r2 $advance_options.r2
+			--clump-range $advance_options.rangefile
+			--clump-range-border $advance_options.gap_kb
+		#else:
+			--clump-range $__tool_directory__/dummy.range
+		#end if
+		--allow-no-sex
+		--out output;
+		rm *.nosex;
+		unlink input.bed;
+		unlink input.bim;
+		unlink input.fam;
+	]]>
+	</command>
+	<inputs>
+		<param name="bedFile" type="data" label="Genotype Data: .bed file" />
+		<param name="bimFile" type="data" format="txt" label="Genotype Data: bim file" />
+		<param name="famFile" type="data" format="txt" label="Genotype Data: fam file" />
+		<param name="assocFile" type="data" format="txt" label="Association test" help="(.assoc.txt) file which contains the association result"/>
+		<param name="snpcol" type="data_column" data_ref="assocFile" use_header_names="true" label="SNP Column" help=""/>
+		<param name="pcol" type="data_column" data_ref="assocFile" use_header_names="true" label="P-value Column" help=""/>
+		<param name="p1" type="float" value="0.01" min="0.00" max="1.00" label="--clump-p1" help="(.float) Significance threshold for index SNPs "/>
+		<conditional name="advance_options">
+			<param name="show" type="boolean" truevalue="yes" falsevalue="no" label="Show Advance Options" />
+			<when value="yes">
+				<param name="p2" type="float" value="0.01" min="0.00" max="1.00" label="--clump-p2" help="(.float) A less stringent p-value threshold for inclusion of peak SNPs "/>
+				<param name="kb" type="integer" value="1" min="1" max="5000" label="--clump-kb" help="(in kb) Physical distance threshold for clumping"/>
+				<param name="r2" type="float" value="0.1" min="0.00" max="1.00" label="--clump-r2" help="(.float) LD threshold for clumping"/>
+				<param name="rangefile" type="data" format="txt" label="--clump-range" help="(.txt) causes the overlaps between regions and clumps to be reported"/>
+				<param name="gap_kb" type="integer" value="1" min="1" max="5000" label="--clump-range-border" help="(in kb) "/>
+			</when>
+			<when value="no" />
+		</conditional>
+	</inputs>
+
+	<outputs>
+		 <data format="txt" name="output" label="Clumping result" >
+			<discover_datasets pattern="__designation__" ext="txt" visible="true" directory="." recurse="true"/>
+		 </data>
+	</outputs>
+
+	<tests>
+		<test>
+			<param name="bedFile" value="test.bed" />
+			<param name="bimFile" value="test.bim" />
+			<param name="famFile" value="test.fam" />
+		</test>
+	</tests>
+	<help>
+.. class:: infomark
+
+**LD-based clumping using Plink.**
+
+-----
+
+**What this tool does**
+
+The clumping procedure takes all SNPs that are significant at threshold p1 that have not already been clumped (denoting these as index SNPs) and forms clumps of all other SNPs that are within a certain kb distance from the index SNP (default 250kb) and that are in linkage disequilibrium with the index SNP, based on an r-squared threshold (default 0.50).
+
+-----
+
+**Plink Binary files**
+
+- .bed (PLINK binary biallelic genotype table) : Primary representation of genotype calls at biallelic variants
+
+- .bim (PLINK extended MAP file) : Extended variant information file accompanying a .bed binary genotype table.
+
+- .fam (PLINK sample information file) : Sample information file accompanying a .bed binary genotype table.
+
+- Output: a report plink.clumped
+
+
+This tool uses Plink v1.9
+
+- Package : PLINK v1.9
+- Authors : Shaun Purcell, Christopher Chang
+- URL     : www.cog-genomics.org/plink/1.9/
+
+        </help>
+
+        <citations>
+        <!-- Example of annotating a citation using a BibTex entry. -->
+                <citation type="bibtex">@ARTICLE{Chang15second-generationplink,
+                author = {Chang CC, Chow CC, Tellier LCAM, Vattikuti S, Purcell SM, Lee JJ},
+                title = {Second-generation PLINK: rising to the challenge of larger and richer datasets},
+                journal = {GigaScience},
+                year = {2015},
+                volume = {4}
+                }</citation>
+        </citations>
+
+</tool>
+
