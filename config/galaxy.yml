@@ -2933,6 +2933,7 @@ galaxy:
   # tool_training_recommendations_link,
   # tool_training_recommendations_api_url
   #tool_training_recommendations: true
+  admin_users: ramilimanbenitez21@gmail.com
 
   # Template URL to display all tutorials containing current tool. Valid
   # template inputs are:   {repository_owner}   {name}   {tool_id}

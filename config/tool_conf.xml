@@ -27,6 +27,13 @@
     <tool file="data_export/send.xml" />
     <tool file="data_export/export_remote.xml" />
   </section>
+
+   <!-- UNIQPRIMER -->
+
+  <section name="Uniqprimer" id="uniqprimer_tool">
+    <tool file="Uniqprimer/uniqprimer.xml" />
+  </section>
+
   <section id="snp_data_tools" name="RiceGalaxy: SNP Data Tools">
     <tool file="snpdatatools/fgsea_rice.xml" />
     <tool file="snpdatatools/findGeneGrep4.xml" />
@@ -150,7 +157,7 @@
     <tool file="phenotype_association/ldtools.xml" />
     <tool file="phenotype_association/master2pg.xml" />
   </section>
-  <!--
+  
   <section id="interactivetools" name="Interactive tools">
     <tool file="interactive/interactivetool_askomics.xml" />
     <tool file="interactive/interactivetool_bam_iobio.xml" />
@@ -166,5 +173,4 @@
     <tool file="interactive/interactivetool_phinch.xml" />
     <tool file="interactive/interactivetool_rstudio.xml" />
   </section>
-  -->
 </toolbox>
