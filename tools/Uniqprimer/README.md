@@ -1,4 +1,4 @@
-UniqPrimer
+# UniqPrimer
 Overview
 UniqPrimer is a tool designed for the specific design of PCR primers targeting bacterial sequences. The tool is intended to process "include" FASTA files of diagnostic target genomes (either draft or complete) and "exclude" files of non-target genomes. The primary goal of UniqPrimer is to generate a list of PCR primers that will amplify the target genomes while avoiding non-target genomes.
 Features
