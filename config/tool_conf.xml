@@ -23,6 +23,11 @@
     <tool file="data_source/eupathdb.xml" />
     <tool file="data_source/hbvar.xml" />
   </section>
+
+    <section id="my_tools" name="Uniqprimer">
+    <tool file="Uniqprimer/uniqprimer.xml" />
+  </section>
+
   <section id="send" name="Send Data">
     <tool file="data_export/send.xml" />
     <tool file="data_export/export_remote.xml" />

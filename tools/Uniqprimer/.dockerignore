@@ -1,0 +1,12 @@
+*.pyc
+__pycache__
+*.bak
+venv
+build
+outfile.txt
+logfile
+logfile.txt
+stdout
+primers.txt
+output
+outalex

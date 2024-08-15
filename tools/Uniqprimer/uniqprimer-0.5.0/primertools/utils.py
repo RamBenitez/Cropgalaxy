@@ -1,0 +1,170 @@
+import time
+import os.path
+from os import pathsep
+import tempfile
+import shutil
+from functools import reduce
+
+def getTimeStamp():
+    return time.strftime('%d%m%Y-%H%M%S')
+
+class Match(object):
+    def __init__(self, start, end, seqID):
+        self.seqID = seqID
+        self.start = start
+        self.end = end
+    
+    def __repr__(self):
+        return "Start: {0}, End:{1}, SeqID:{2}".format(self.start, self.end, self.seqID)
+
+class PrimerSet(object):
+    def __init__(self, id):
+        self.id = id
+        self.productSize = 0
+        self.forwardPrimer = ""
+        self.forwardMeltTemp = ""
+        self.reversePrimer = ""
+        self.reverseMeltTemp = ""
+
+    def setProductSize(self, productSize):
+        self.productSize = productSize
+        
+    def setForwardPrimerData(self, sequence, temp):
+        self.forwardPrimer = sequence
+        self.forwardMeltTemp = temp
+        
+    def setReversePrimerData(self, sequence, temp):
+        self.reversePrimer = sequence
+        self.reverseMeltTemp = temp
+
+def search_file(filename):
+    search_path = os.getenv('PATH')
+    logMessage("utils::search_file", "Path: {0}".format(search_path))
+    file_found = 0
+    paths = search_path.split(pathsep)
+    for path in paths:
+        if os.path.exists(os.path.join(path, filename)):
+            file_found = 1
+            break
+    if file_found:
+        return os.path.abspath(os.path.join(path, filename))
+    else:
+        return None
+
+tempDir = ""
+removeTemp = True
+
+verbose = False
+
+def initialize(isVerbose, cleanup, lf):
+    global removeTemp
+    global tempDir
+    global verbose
+    global logFile
+
+    logFile = lf
+    
+    verbose = isVerbose
+    tempDir = tempfile.mkdtemp(dir="")
+    initializeLogging()
+    removeTemp = cleanup
+    logMessage("utils::Initialize()", "Initialization complete. Temporary directory: {0}".format(tempDir))
+    
+logFile = None
+
+def printProgressMessage(message):
+    global verbose
+    if verbose:
+        print(message)
+
+def getTemporaryDirectory():
+    global tempDir
+    return tempDir
+
+def initializeLogging():
+    global logFile
+    logFileName = logFile
+    logFile = open(logFileName, 'w')
+
+def shutdown():
+    global removeTemp
+    global tempDir
+    shutdownLogging()
+    if removeTemp:
+        print("*** Removing temporary directory ***")
+        shutil.rmtree(tempDir)
+    
+def shutdownLogging():
+    global logFile
+    if logFile is not None:
+        logFile.close()
+
+def logList(method, list):
+    message = reduce(lambda x, y: str(x) + " " + str(y), list)
+    logMessage(method, message)
+
+def logMessage(method, message):
+    global logFile
+    if logFile is None:
+        return
+    log = "{0} - {1}".format(method, message)
+    logFile.write(log + "\n")
+    logFile.flush()
+
+class EPrimerOptions(object):
+    def __init__(self):
+        self.minPrimerSize = 18
+        self.maxPrimerSize = 27
+        self.primerSize = 20
+        self.productRange = "200-250"
+    
+    def setPrimerSize(self, size):
+        size = int(size)
+        if size > 35:
+            size = 35
+        
+        self.primerSize = size
+        if self.primerSize < self.minPrimerSize:
+            self.maxPrimerSize = self.primerSize 
+        elif self.primerSize > self.maxPrimerSize:
+            self.maxPrimerSize = self.primerSize
+    
+    def getPrimerSize(self):
+        return self.primerSize
+    
+    def setMinPrimerSize(self, minSize):
+        self.minPrimerSize = minSize
+    
+    def getMinPrimerSize(self):
+        return self.minPrimerSize
+
+    def setMaxPrimerSize(self, size):
+        self.maxPrimerSize = size
+        
+    def getMaxPrimerSize(self):
+        return self.maxPrimerSize
+    
+    def setProductRange(self, range):
+        self.productRange = range
+        
+    def getProductRange(self):
+        return self.productRange
+
+class NoPrimersExistException(Exception):
+    pass
+
+class ProgramNotFoundException(Exception):
+    def __init__(self, programName, details):
+        super().__init__()
+        self.programName = programName
+        self.details = details
+        
+class NoFileFoundException(Exception):
+    def __init__(self, filename):
+        super().__init__()
+        self.filename = filename
+
+class ModuleNotInitializedException(Exception):
+    def __init__(self, moduleName, reason):
+        self.moduleName = moduleName
+        self.reason = reason

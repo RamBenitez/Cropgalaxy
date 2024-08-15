@@ -1,0 +1,7 @@
+services:
+  uniqprimer:
+    build: .
+    container_name: uniqprimer
+    volumes:
+      - /home/volture2721/Desktop/Practicum2/Uniqprimer/uniqprimer-0.5.0/data:/app/data
+    command: ["-i", "/app/data/PXO99.fa", "-x", "/app/data/BLS256.fa", "--productsizerange", "100-300", "--primersize", "20", "--minprimersize", "18", "--crossvalidate", "--keeptempfiles", "--maxprimersize", "27", "-o", "/app/data/5Aug2024_PX099-BLS256_primers.out", "-f", "/app/data/5Aug2024.fa", "-l", "/app/data/5Aug2024.log"]
